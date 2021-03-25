@@ -38,7 +38,11 @@ defmodule EndonTest do
       assert UserSingle.where(id: 1) == ["from u0 in UserSingle, where: u0.id == ^1"]
     end
 
-    test "when using where with limit" do
+    test "when using where with a map" do
+      assert UserSingle.where(%{id: 1}) == ["from u0 in UserSingle, where: u0.id == ^1"]
+    end
+
+    test "when using where with limit keyword" do
       assert UserSingle.where(id: 1, limit: 2) == [
                "from u0 in UserSingle, where: u0.id == ^1, where: u0.limit == ^2"
              ]
@@ -59,6 +63,14 @@ defmodule EndonTest do
       assert_raise(NoResultsError, fn ->
         UserNone.find(1)
       end)
+    end
+
+    test "when using find_by" do
+      assert UserSingle.find_by(id: 1) ==
+               "from u0 in UserSingle, where: u0.id == ^1, limit: ^1"
+
+      assert UserSingle.find_by(%{id: 2}) ==
+               "from u0 in UserSingle, where: u0.id == ^2, limit: ^1"
     end
 
     test "when using fetch" do
