@@ -204,7 +204,10 @@ defmodule Endon.Helpers do
     if where_opts[:limit] == 1, do: first_or_nil(result), else: result
   end
 
-  def create(repo, module, %module{} = params), do: create(repo, module, Map.from_struct(params))
+  def create(repo, module, %module{} = prototype) do
+    params = prototype |> Map.from_struct() |> Map.drop([:__meta__])
+    create(repo, module, params)
+  end
 
   def create(repo, module, params) when is_list(params),
     do: create(repo, module, Enum.into(params, %{}))
